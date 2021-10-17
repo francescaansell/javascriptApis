@@ -5,7 +5,9 @@ accessData();
 function accessData(){
     
     const request = new XMLHttpRequest();
-    request.open("GET", "https://foodish-api.herokuapp.com/", true);
+    request.open("GET", "https://dog.ceo/dog-api/breeds-list", true);
+
+    console.log("Access Data entered")
 
     request.onLoad = function() {
         data = JSON.parse(this.response);
