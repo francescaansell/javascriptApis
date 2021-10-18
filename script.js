@@ -68,6 +68,8 @@ function addRow(selectedBreed, origin){
     
 
     document.querySelector("#table").appendChild(tableRow);
+
+    console.log(" after adding to the table ---------------------------------------------------------")
 }
 
 
@@ -96,6 +98,7 @@ function getInfo(){
             origin = breedName + " " + "Unknown"
         }
 
+        console.log("before add Row call ----------------------------")
         addRow(breedName, origin);
     };
     request.send();
