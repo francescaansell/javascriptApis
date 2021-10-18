@@ -10,7 +10,6 @@ function getRandomInt(max) {
 }
 
 accessBreedData();
-populateTable();
 
 function accessBreedData(){
     
@@ -69,16 +68,16 @@ function addRow(selectedBreed, origin){
 
     document.querySelector("#table").appendChild(tableRow);
 
-    console.log(" after adding to the table ---------------------------------------------------------")
+    console.log("---- after adding " + selectedBreed + " to the table --------------------------------------")
 }
 
 
 //Gets called when user clicks Add Breed
 function getInfo(){
 
-    console.log("----- User just clicked Add Breed -------------------------------");
-
     breedName = document.querySelector("#breeds").value; 
+    console.log("----- User just clicked Add Breed for + " + breedName + "---------------------------");
+
     const request = new XMLHttpRequest();
 
     let url = "http://api.dictionaryapi.dev/api/v2/entries/en/" + breedName; 
@@ -91,10 +90,9 @@ function getInfo(){
         if(request.status == 200){
             console.log("Info Response OK");  
             origin = breedName + " " + data[0].origin;
-           
+            console.log(breedName + " "  + origin);
         }else {
             console.log(`Error occured: Status: ${request.status}`);
-            console.log("Cannot find breed");
             origin = breedName + " " + "Unknown"
         }
 
