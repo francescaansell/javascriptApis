@@ -131,6 +131,7 @@ function populateTable(breed){
         }
 
         addRow(breed, origin);
+        console.log("after addRow call-----------------------------------------")
     };
     request.send();
 
