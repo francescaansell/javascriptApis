@@ -97,8 +97,6 @@ function getInfo(){
 
     return origin; 
 
-
-    
 }
 
 

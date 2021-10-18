@@ -4,4 +4,13 @@ table, tr, td, th {
     padding: 8px; 
   }
 
+h1 {
+  font-size: 40px; 
+  color: rgb(37, 80, 109);
+}
 
+button {
+  border-radius: 8px;
+  background-color: rgb(196, 194, 194);
+  border: 3px solid rgb(37, 80, 109);
+}
