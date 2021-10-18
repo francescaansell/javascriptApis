@@ -1,7 +1,7 @@
-console.log("script.js connected");
 //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
+let origin; 
+let data;
 let breedData;
-let factsData;
 let breeds = [];
 
 function getRandomInt(max) {
@@ -11,7 +11,6 @@ function getRandomInt(max) {
 accessBreedData();
 
 function accessBreedData(){
-    console.log("Test");
     
     const request = new XMLHttpRequest();
 
@@ -21,11 +20,18 @@ function accessBreedData(){
         breedData = JSON.parse(this.response);
 
         if(request.status == 200){
-            console.log("Response OK.");
+            console.log("Breed Response OK.");
 
             for (const breed in breedData.message){
                 //console.log(breed);
                 breeds.push(breed); 
+                let dropDown = document.querySelector("#breeds");
+
+                let breedText = document.createTextNode(breed);
+                let option = document.createElement('option');
+
+                option.appendChild(breedText);
+                dropDown.appendChild(option);
             } 
         }
         else{
@@ -35,59 +41,60 @@ function accessBreedData(){
     request.send();
 }
 
-function getRandomBreed(){
-    let num = getRandomInt(breeds.length);
-    //console.log(num);
-    //console.log(breeds[num]);
+
+function addRow(){
+    let selectedBreed = document.querySelector("#breeds").value; 
+
+    console.log("Selected Item: " + selectedBreed);
 
     let tableRow = document.createElement('tr');
+
     let tableDataBreed = document.createElement('td');
-    let tableDataFact = document.createElement('td');
+    let tableDataDefinition = document.createElement('td');
 
-    let breedText = document.createTextNode(breeds[num]);
+    let breedText = document.createTextNode(selectedBreed);
+    let definitionText = document.createTextNode(getInfo(selectedBreed));
 
-    facts = getFacts(breeds[num])
-    for (const fact of facts){
-        let factText = document.createTextNode(fact);
-        tableDataFact.appendChild(factText);
-    }
-  
     tableDataBreed.appendChild(breedText);
+    tableDataDefinition.appendChild(definitionText);
+   
 
     tableRow.appendChild(tableDataBreed);
-    tableRow.appendChild(tableDataFact);
+    tableRow.appendChild(tableDataDefinition);
+    
 
     document.querySelector("#table").appendChild(tableRow);
 }
 
-function getFacts(breedName){
-    console.log("Text Facts");
 
+
+function getInfo(breedName){
     const request = new XMLHttpRequest();
 
-    //let url = "http://dog-api.kinduff.com/api/facts?number=" + breedName.length;
-    //console.log(url);
-
-    request.open("GET", "http://dog-api.kinduff.com/api/facts", true);
-
-    let facts = [];
+    let url = "https://api.dictionaryapi.dev/api/v2/entries/en/" + breedName; 
+  
+    request.open("GET", url, true);
 
     request.onload = function() {
-        factsData = JSON.parse(this.response);
+        data = JSON.parse(this.response);
 
         if(request.status == 200){
-            console.log("Response OK");
-            for (const fact in factsData.facts){
-                facts.push(fact);
-                console.log(fact);
-            }
+            console.log("Info Response OK");  
+            origin = breedName + " " + data[0].origin;
+           
         }else {
-            console.log(`Error occured: Status: ${request.status}`);
+            //console.log(`Error occured: Status: ${request.status}`);
+            console.log("Cannot find breed");
+            origin = breedName + " " + "Unknown"
         }
     };
     request.send();
 
-    return facts; 
+    console.log("Origin: " + origin);
+
+    return origin; 
+
+
     
 }
 

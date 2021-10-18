@@ -9,15 +9,19 @@
 <body>
 
     <div id="main">
+
+        <select id="breeds" onChange="updateBreed();">
+
+        </select>
     
-        <button onclick="getRandomBreed();">Get a breed</button>
+        <button onclick="addRow();">Add breed</button>
 
         <br>
         <br> 
 
         <table id="table">
             <tr>
-                <th>Breed Name</th><th>Image</th>
+                <th>Breed Name</th><th>Breed Origin</th>
             </tr>
 
         </table>
