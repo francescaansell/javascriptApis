@@ -42,8 +42,8 @@ function accessBreedData(){
 }
 
 
-function addRow(){
-    let selectedBreed = document.querySelector("#breeds").value; 
+function addRow(selectedBreed, origin){
+    //let selectedBreed = document.querySelector("#breeds").value; 
 
     console.log("Selected Item: " + selectedBreed);
 
@@ -53,7 +53,7 @@ function addRow(){
     let tableDataDefinition = document.createElement('td');
 
     let breedText = document.createTextNode(selectedBreed);
-    let definitionText = document.createTextNode(getInfo(selectedBreed));
+    let definitionText = document.createTextNode(origin);
 
     tableDataBreed.appendChild(breedText);
     tableDataDefinition.appendChild(definitionText);
@@ -68,7 +68,8 @@ function addRow(){
 
 
 
-function getInfo(breedName){
+function getInfo(){
+    let breedName = document.querySelector("#breeds").value; 
     const request = new XMLHttpRequest();
 
     let url = "https://api.dictionaryapi.dev/api/v2/entries/en/" + breedName; 
@@ -87,6 +88,8 @@ function getInfo(breedName){
             console.log("Cannot find breed");
             origin = breedName + " " + "Unknown"
         }
+
+        addRow(breedName, origin);
     };
     request.send();
 
