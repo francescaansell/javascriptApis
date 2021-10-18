@@ -3,12 +3,14 @@ let origin;
 let data;
 let breedData;
 let breeds = [];
+let breedName; 
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
 
 accessBreedData();
+populateTable();
 
 function accessBreedData(){
     
@@ -32,6 +34,8 @@ function accessBreedData(){
 
                 option.appendChild(breedText);
                 dropDown.appendChild(option);
+
+                populateTable(breed);
             } 
         }
         else{
@@ -67,12 +71,15 @@ function addRow(selectedBreed, origin){
 }
 
 
-
+//Gets called when user clicks Add Breed
 function getInfo(){
-    let breedName = document.querySelector("#breeds").value; 
+
+    console.log("----- User just clicked Add Breed -------------------------------");
+
+    breedName = document.querySelector("#breeds").value; 
     const request = new XMLHttpRequest();
 
-    let url = "https://api.dictionaryapi.dev/api/v2/entries/en/" + breedName; 
+    let url = "http://api.dictionaryapi.dev/api/v2/entries/en/" + breedName; 
   
     request.open("GET", url, true);
 
@@ -84,7 +91,7 @@ function getInfo(){
             origin = breedName + " " + data[0].origin;
            
         }else {
-            //console.log(`Error occured: Status: ${request.status}`);
+            console.log(`Error occured: Status: ${request.status}`);
             console.log("Cannot find breed");
             origin = breedName + " " + "Unknown"
         }
@@ -95,10 +102,46 @@ function getInfo(){
 
     console.log("Origin: " + origin);
 
-    return origin; 
 
 }
 
+function populateTable(breed){
+
+    console.log("populate table")    
+    console.log(breed);
+
+
+    const request = new XMLHttpRequest();
+
+    let url = "http://api.dictionaryapi.dev/api/v2/entries/en/" + breed; 
+
+    request.open("GET", url, true);
+
+    request.onload = function() {
+        data = JSON.parse(this.response);
+
+        if(request.status == 200){
+            console.log("Info Response OK");  
+            origin = breed + " " + data[0].origin;
+        
+        }else {
+            console.log(`Error occured: Status: ${request.status}`);
+            console.log("Cannot find breed");
+            origin = breed + " " + "Unknown"
+        }
+
+        addRow(breed, origin);
+    };
+    request.send();
+
+    console.log("Origin: " + origin);
+
+
+
+    
+    
+
+}
 
 
 
