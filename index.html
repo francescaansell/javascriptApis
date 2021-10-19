@@ -17,14 +17,21 @@
 
         </select>
     
-        <button onclick="getInfo();">Add breed</button>
+        <button onclick="getInfo();">Add breed</button><button onClick="clearTable();">Clear Table</button>
 
         <br>
         <br> 
 
+        
+        <input type="checkbox" id="includeImage">        
+        <label for="includeImage">Include image of breed</label>
+
+        <br> 
+        <br>
+        
         <table id="table">
             <tr>
-                <th>Breed Name</th><th>Breed Origin</th>
+                <th>Breed Name</th><th>Breed Name Origin</th><th>Breed Image</th>
             </tr>
 
         </table>
