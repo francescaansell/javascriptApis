@@ -5,7 +5,7 @@ let breedData;
 let breeds = [];
 let breedName; 
 let breedImageData;
-let image; 
+let imageSrc; 
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -59,35 +59,31 @@ function getImage(breedName){
         if(request.status == 200){
             console.log("Breed Image Response OK.");
 
+            console.log(breedName);
             console.log(breedImageData.message[0])
 
-            image = document.createElement('img');
-            image.setAttribute("src", breedImageData.message[0]);
-            image.src = breedImageData.message[0];
+            imageSrc = breedImageData.message[0];
+         
             
         }
         else{
             console.log(`Error occurred: Status: ${request.status}`);
+            imageSrc = "no-image.jpg"
+           
         }
     };
     request.send();
 
-    return image;
+    return imageSrc;
     
 }
 
 
 
-function addRow(selectedBreed, origin){
+function addRow(selectedBreed, origin, imageSrc){
     //let selectedBreed = document.querySelector("#breeds").value; 
 
-    //console.log("Selected Item: " + selectedBreed);
-
-    if(document.querySelector("#includeImage").checked){
-        image = getImage(breedName);
-    }
-
-
+    console.log("Breed: " + selectedBreed + " Origin: " + origin + " Image source: " + imageSrc);
 
     let tableRow = document.createElement('tr');
 
@@ -101,7 +97,20 @@ function addRow(selectedBreed, origin){
 
     tableDataBreed.appendChild(breedText);
     tableDataDefinition.appendChild(definitionText);
-    tableDataImage.appendChild(image);
+
+    let imageElement = document.createElement('img');
+
+    if (imageSrc == ""){
+
+    } else {
+        imageElement.setAttribute("src", imageSrc);
+        imageElement.setAttribute("alt", "alternate image");
+        tableDataImage.appendChild(imageElement);
+    }
+
+    
+ 
+    
    
 
     tableRow.appendChild(tableDataBreed);
@@ -118,11 +127,30 @@ function addRow(selectedBreed, origin){
 //Gets called when user clicks Add Breed
 function getInfo(){
 
+    let srcImage;
+
     breedName = document.querySelector("#breeds").value; 
     console.log("----- User just clicked Add Breed for " + breedName + "-----------------");
 
-    console.log(document.getElementById('includeImage').checked);
+    console.log(document.querySelector("#includeImage").checked)
+
+    try {
+        if(document.querySelector("#includeImage").checked){
+            srcImage = getImage(breedName);
+            console.log("In getinfo() getImage(breedName) = " + getImage(breedName))
+            
+        } else {
+            srcImage = "";
+        }
+    } catch {
+        srcImage = "no-image.jpg"
+    }
+  
     
+
+
+
+    console.log("Image source in getInfo(): " + srcImage)
 
     const request = new XMLHttpRequest();
 
@@ -138,16 +166,13 @@ function getInfo(){
             origin = data[0].origin;
             //console.log(breedName + " "  + origin);
         }else {
-            //console.log(`Error occured: Status: ${request.status}`);
+            console.log(`Error occured: Status: ${request.status}`);
             origin = "Unknown"
         }
-
-        //console.log("before add Row call ----------------------------")
-        addRow(breedName, origin);
+        addRow(breedName, origin, srcImage);
     };
     request.send();
 
-    //console.log("Origin: " + origin);
 
 
 }
