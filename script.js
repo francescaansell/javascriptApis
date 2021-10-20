@@ -100,23 +100,15 @@ function addRow(selectedBreed, origin, imageSrc){
 
     let imageElement = document.createElement('img');
 
-    if (imageSrc == ""){
 
-    } else {
         imageElement.setAttribute("src", imageSrc);
         imageElement.setAttribute("alt", "alternate image");
         tableDataImage.appendChild(imageElement);
-    }
 
-    
- 
-    
-   
 
     tableRow.appendChild(tableDataBreed);
     tableRow.appendChild(tableDataDefinition);
-    tableRow.appendChild(tableDataImage);
-    
+    tableRow.appendChild(tableDataImage);    
 
     document.querySelector("#table").appendChild(tableRow);
 
@@ -132,49 +124,53 @@ function getInfo(){
     breedName = document.querySelector("#breeds").value; 
     console.log("----- User just clicked Add Breed for " + breedName + "-----------------");
 
-    console.log(document.querySelector("#includeImage").checked)
+    const request2 = new XMLHttpRequest();
+    url2 = "https://dog.ceo/api/breed/" + breedName + "/images/random/1";
+    request2.open("GET", url2, true);
+   
+    if(document.querySelector("#includeImage").checked){
 
-    try {
-        if(document.querySelector("#includeImage").checked){
-            srcImage = getImage(breedName);
-            console.log("In getinfo() getImage(breedName) = " + getImage(breedName))
+        console.log("entered checked------------------")
+        
+        request2.onload = function() {
+            console.log("entered request2.onlaod -------------")
+            breedImageData = JSON.parse(this.response);
+
+            if(request2.status == 200){
+                console.log("Breed Image Response OK.");
+                imageSrc = breedImageData.message[0];
             
-        } else {
-            srcImage = "";
-        }
-    } catch {
-        srcImage = "no-image.jpg"
+            }
+            else{
+                console.log(`Error occurred: Status: ${request2.status}`);
+                imageSrc = "no-image.jpg"
+            }
+        };
+        request2.send();
     }
-  
-    
-
-
 
     console.log("Image source in getInfo(): " + srcImage)
 
-    const request = new XMLHttpRequest();
+    const request1 = new XMLHttpRequest();
 
-    let url = "http://api.dictionaryapi.dev/api/v2/entries/en/" + breedName; 
+    let url1 = "http://api.dictionaryapi.dev/api/v2/entries/en/" + breedName; 
   
-    request.open("GET", url, true);
+    request1.open("GET", url1, true);
 
-    request.onload = function() {
+    request1.onload = function() {
         data = JSON.parse(this.response);
 
-        if(request.status == 200){
+        if(request1.status == 200){
             console.log("Info Response OK");  
             origin = data[0].origin;
             //console.log(breedName + " "  + origin);
         }else {
-            console.log(`Error occured: Status: ${request.status}`);
+            console.log(`Error occured: Status: ${request1.status}`);
             origin = "Unknown"
         }
-        addRow(breedName, origin, srcImage);
+        addRow(breedName, origin, imageSrc);
     };
-    request.send();
-
-
-
+    request1.send();
 }
 
 function populateTable(breed){
