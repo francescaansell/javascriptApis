@@ -6,7 +6,7 @@ let breedName;
 let breedImageData;
 
 let images = []; 
-let imageSrc; 
+
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -35,8 +35,10 @@ function accessBreedData(){
                 dropDown.appendChild(option);
 
                 //populateTable(breed);
-                console.log("accessBreedData----- getImage(breed): " + getImage(breed));
-                images.push(getImage(breed))
+                //console.log("accessBreedData----- getImage(breed): " + getImage(breed));
+
+                getImage(breed);
+                
             } 
         }
         else{
@@ -55,6 +57,7 @@ function getImage(breedName){
     request.open("GET", url, true);
 
     request.onload = function() {
+        let imageSrc; 
         breedImageData = JSON.parse(this.response);
 
         if(request.status == 200){
@@ -67,14 +70,12 @@ function getImage(breedName){
             imageSrc = "no-image.jpg"
         }
         console.log("getImage() --------- imageSrc: " + imageSrc);
-        //return imageSrc;
+        images.push(imageSrc)
     };
     request.send();    
 }
 
-function addRow(selectedBreed, origin, imageSource){
-   console.log("Breed: " + selectedBreed + " Origin: " + origin + " Image source: " + imageSource);
-
+function addRow(selectedBreed, origin){
     let tableRow = document.createElement('tr');
 
     let tableDataBreed = document.createElement('td');
@@ -92,12 +93,11 @@ function addRow(selectedBreed, origin, imageSource){
         console.log(document.querySelector("#breeds").selectedIndex)
 
         let imageElement = document.createElement('img');
+        console.log("src: " + images[document.querySelector("#breeds").selectedIndex])
         imageElement.setAttribute("src", images[document.querySelector("#breeds").selectedIndex]);
-        imageElement.setAttribute("alt", "alternate image");
+        imageElement.setAttribute("alt", "alt");
         tableDataImage.appendChild(imageElement);
     } 
-
-    console.log("Image source in getInfo(): " + imageSrc)
     tableRow.appendChild(tableDataBreed);
     tableRow.appendChild(tableDataDefinition);
     tableRow.appendChild(tableDataImage);    
@@ -108,13 +108,10 @@ function addRow(selectedBreed, origin, imageSource){
 }
 
 //Gets called when user clicks Add Breed
+
 function getInfo(){
-
-
     breedName = document.querySelector("#breeds").value; 
     console.log("----- User just clicked Add Breed for " + breedName + "-----------------");
-   
-    
 
     const request = new XMLHttpRequest();
 
@@ -133,7 +130,7 @@ function getInfo(){
             console.log(`Error occured: Status: ${request.status}`);
             origin = "Unknown"
         }
-        addRow(breedName, origin, imageSrc);
+        addRow(breedName, origin);
     };
     request.send();
 }
