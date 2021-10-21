@@ -14,14 +14,14 @@
         <p><strong>Not sure what breed to get?</strong></p>
 
         <P>Search the list of breeds below to view a picture and a possible definition. </P>
-        <P>Leave any commments or notes that you want to remember in the text box below.</P>
+        
         </br>
 
         <select id="breeds">
 
         </select>
     
-        <button onclick="getInfo();">Add breed</button><button onClick="clearTable();">Clear Table</button>
+        <button onclick="getInfo();">Add breed</button><button onClick="clearTable();">Clear Table</button><button onClick="randomBreed();">Random Breed</button>
 
         <br>
         <br> 
@@ -31,6 +31,18 @@
         <label for="includeImage">Include image of breed</label>
 
         <br> 
+        <br>
+
+        <p><strong>Leave any commments or notes that you want to remember in the text box below.</strong></p>
+        <input type="text" id="comment" placeholder="Type here..."><button onClick="addComment();">Add comment</button>
+
+        <br> 
+        <br> 
+
+        <div id="commentSection">
+            
+        </div>
+        <br>
         <br>
         
         <table id="table">
