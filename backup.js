@@ -1,11 +1,12 @@
 //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
 let origin; 
-let data;
 let breedData;
 let breeds = [];
 let breedName; 
 let breedImageData;
-let imageSrc; 
+
+let images = []; 
+
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -14,11 +15,8 @@ function getRandomInt(max) {
 accessBreedData();
 
 function accessBreedData(){
-    
     const request = new XMLHttpRequest();
-
     request.open("GET", "https://dog.ceo/api/breeds/list/all", true);
-
     request.onload = function() {
         breedData = JSON.parse(this.response);
 
@@ -37,11 +35,16 @@ function accessBreedData(){
                 dropDown.appendChild(option);
 
                 //populateTable(breed);
+                //console.log("accessBreedData----- getImage(breed): " + getImage(breed));
+
+                getImage(breed);
+                
             } 
         }
         else{
             console.log(`Error occurred: Status: ${request.status}`);
         }
+        console.log(images)
     };
     request.send();
 }
@@ -54,37 +57,25 @@ function getImage(breedName){
     request.open("GET", url, true);
 
     request.onload = function() {
+        let imageSrc; 
         breedImageData = JSON.parse(this.response);
 
         if(request.status == 200){
             console.log("Breed Image Response OK.");
-
-            console.log(breedName);
-            console.log(breedImageData.message[0])
-
+            //console.log(breedImageData.message[0])
             imageSrc = breedImageData.message[0];
-         
-            
         }
         else{
             console.log(`Error occurred: Status: ${request.status}`);
             imageSrc = "no-image.jpg"
-           
         }
+        console.log("getImage() --------- imageSrc: " + imageSrc);
+        images.push(imageSrc)
     };
-    request.send();
-
-    return imageSrc;
-    
+    request.send();    
 }
 
-
-
-function addRow(selectedBreed, origin, imageSrc){
-    //let selectedBreed = document.querySelector("#breeds").value; 
-
-    console.log("Breed: " + selectedBreed + " Origin: " + origin + " Image source: " + imageSrc);
-
+function addRow(selectedBreed, origin){
     let tableRow = document.createElement('tr');
 
     let tableDataBreed = document.createElement('td');
@@ -94,18 +85,19 @@ function addRow(selectedBreed, origin, imageSrc){
     let breedText = document.createTextNode(selectedBreed);
     let definitionText = document.createTextNode(origin);
     
-
     tableDataBreed.appendChild(breedText);
     tableDataDefinition.appendChild(definitionText);
 
-    let imageElement = document.createElement('img');
+    if(document.querySelector("#includeImage").checked){
+        console.log("entered checked------------------")
+        console.log(document.querySelector("#breeds").selectedIndex)
 
-
-        imageElement.setAttribute("src", imageSrc);
-        imageElement.setAttribute("alt", "alternate image");
+        let imageElement = document.createElement('img');
+        console.log("src: " + images[document.querySelector("#breeds").selectedIndex])
+        imageElement.setAttribute("src", images[document.querySelector("#breeds").selectedIndex]);
+        imageElement.setAttribute("alt", "alt");
         tableDataImage.appendChild(imageElement);
-
-
+    } 
     tableRow.appendChild(tableDataBreed);
     tableRow.appendChild(tableDataDefinition);
     tableRow.appendChild(tableDataImage);    
@@ -115,64 +107,32 @@ function addRow(selectedBreed, origin, imageSrc){
     //console.log("---- after adding " + selectedBreed + " to the table ------------------------")
 }
 
-
 //Gets called when user clicks Add Breed
+
 function getInfo(){
-
-    let srcImage;
-
     breedName = document.querySelector("#breeds").value; 
     console.log("----- User just clicked Add Breed for " + breedName + "-----------------");
 
-    const request2 = new XMLHttpRequest();
-    url2 = "https://dog.ceo/api/breed/" + breedName + "/images/random/1";
-    request2.open("GET", url2, true);
-   
-    if(document.querySelector("#includeImage").checked){
+    const request = new XMLHttpRequest();
 
-        console.log("entered checked------------------")
-        
-        request2.onload = function() {
-            console.log("entered request2.onlaod -------------")
-            breedImageData = JSON.parse(this.response);
-
-            if(request2.status == 200){
-                console.log("Breed Image Response OK.");
-                imageSrc = breedImageData.message[0];
-            
-            }
-            else{
-                console.log(`Error occurred: Status: ${request2.status}`);
-                imageSrc = "no-image.jpg"
-            }
-        };
-        request2.send();
-    }
-
-    console.log("Image source in getInfo(): " + srcImage)
-
-
-    //get origin of breed
-    const request1 = new XMLHttpRequest();
-
-    let url1 = "http://api.dictionaryapi.dev/api/v2/entries/en/" + breedName; 
+    let url = "http://api.dictionaryapi.dev/api/v2/entries/en/" + breedName; 
   
-    request1.open("GET", url1, true);
+    request.open("GET", url, true);
 
-    request1.onload = function() {
-        data = JSON.parse(this.response);
+    request.onload = function() {
+        let data = JSON.parse(this.response);
 
-        if(request1.status == 200){
+        if(request.status == 200){
             console.log("Info Response OK");  
             origin = data[0].origin;
             //console.log(breedName + " "  + origin);
         }else {
-            console.log(`Error occured: Status: ${request1.status}`);
+            console.log(`Error occured: Status: ${request.status}`);
             origin = "Unknown"
         }
-        addRow(breedName, origin, imageSrc);
+        addRow(breedName, origin);
     };
-    request1.send();
+    request.send();
 }
 
 function populateTable(breed){
@@ -201,6 +161,7 @@ function populateTable(breed){
         }
 
         addRow(breed, origin);
+        console.log("after addRow call-----------------------------------------")
     };
     request.send();
 
@@ -231,3 +192,21 @@ function clearTable(){
 
     document.querySelector("#table").appendChild(tableRow); 
 }
+
+function addComment(){
+    let text = document.querySelector("#comment").value; 
+   
+    let textNode = document.createTextNode(text);
+    let line = document.createElement('p');
+
+    line.appendChild(textNode);
+    document.querySelector("#commentSection").appendChild(line);
+
+    document.querySelector("#comment").value = ""; 
+
+
+}
+
+
+
+

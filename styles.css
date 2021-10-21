@@ -16,3 +16,13 @@ button {
   margin: 0px 6px 0px 6px
 }
 
+img { 
+  height: 200px; 
+}
+
+#commentSection {
+  border: 1px solid black; 
+  width: 600px; 
+  min-height: 50px; 
+
+}

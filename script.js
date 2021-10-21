@@ -1,18 +1,19 @@
 //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
-let origin; 
+
 let breedData;
 let breeds = [];
 let breedName; 
 let breedImageData;
 
-let images = []; 
-
+let imageSrc = '';
 
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
 
 accessBreedData();
+getImage("affenpinscher");
+
 
 function accessBreedData(){
     const request = new XMLHttpRequest();
@@ -26,25 +27,19 @@ function accessBreedData(){
             for (const breed in breedData.message){
                 //console.log(breed);
                 breeds.push(breed); 
-                let dropDown = document.querySelector("#breeds");
 
+                let dropDown = document.querySelector("#breeds");
                 let breedText = document.createTextNode(breed);
                 let option = document.createElement('option');
 
                 option.appendChild(breedText);
-                dropDown.appendChild(option);
-
-                //populateTable(breed);
-                //console.log("accessBreedData----- getImage(breed): " + getImage(breed));
-
-                getImage(breed);
-                
+                dropDown.appendChild(option);                
             } 
         }
         else{
             console.log(`Error occurred: Status: ${request.status}`);
         }
-        console.log(images)
+        console.log(breeds)        
     };
     request.send();
 }
@@ -52,27 +47,27 @@ function accessBreedData(){
 function getImage(breedName){
     const request = new XMLHttpRequest();
 
-    url = "https://dog.ceo/api/breed/" + breedName + "/images/random/1";
+    url = `https://dog.ceo/api/breed/${breedName}/images/random/1`;
 
-    request.open("GET", url, true);
-
+    //Discussed making this call synchronous during class time on 10/20 with Professor Rimland
+    request.open("GET", url, false);
+    
     request.onload = function() {
-        let imageSrc; 
+       
         breedImageData = JSON.parse(this.response);
 
         if(request.status == 200){
             console.log("Breed Image Response OK.");
-            //console.log(breedImageData.message[0])
             imageSrc = breedImageData.message[0];
         }
         else{
             console.log(`Error occurred: Status: ${request.status}`);
-            imageSrc = "no-image.jpg"
+            imageSrc = ""
         }
-        console.log("getImage() --------- imageSrc: " + imageSrc);
-        images.push(imageSrc)
+        console.log(`getImage() --------- imageSrc: ${imageSrc}`);
     };
-    request.send();    
+    request.send(); 
+    return imageSrc;     
 }
 
 function addRow(selectedBreed, origin){
@@ -89,13 +84,10 @@ function addRow(selectedBreed, origin){
     tableDataDefinition.appendChild(definitionText);
 
     if(document.querySelector("#includeImage").checked){
-        console.log("entered checked------------------")
-        console.log(document.querySelector("#breeds").selectedIndex)
-
         let imageElement = document.createElement('img');
-        console.log("src: " + images[document.querySelector("#breeds").selectedIndex])
-        imageElement.setAttribute("src", images[document.querySelector("#breeds").selectedIndex]);
-        imageElement.setAttribute("alt", "alt");
+        console.log(`addRow ---- imageSrc: ${getImage(selectedBreed)}`);
+        imageElement.setAttribute("src", getImage(selectedBreed));
+        imageElement.setAttribute("alt", `picture of ${selectedBreed}`);
         tableDataImage.appendChild(imageElement);
     } 
     tableRow.appendChild(tableDataBreed);
@@ -104,18 +96,16 @@ function addRow(selectedBreed, origin){
 
     document.querySelector("#table").appendChild(tableRow);
 
-    //console.log("---- after adding " + selectedBreed + " to the table ------------------------")
+    console.log(`---- after adding ${selectedBreed} to the table ------------------------`)
 }
-
-//Gets called when user clicks Add Breed
 
 function getInfo(){
     breedName = document.querySelector("#breeds").value; 
-    console.log("----- User just clicked Add Breed for " + breedName + "-----------------");
+    console.log(`----- User just clicked Add Breed for ${breedName}-----------------`);
 
     const request = new XMLHttpRequest();
 
-    let url = "http://api.dictionaryapi.dev/api/v2/entries/en/" + breedName; 
+    let url = `http://api.dictionaryapi.dev/api/v2/entries/en/${breedName}`; 
   
     request.open("GET", url, true);
 
@@ -128,22 +118,18 @@ function getInfo(){
             //console.log(breedName + " "  + origin);
         }else {
             console.log(`Error occured: Status: ${request.status}`);
-            origin = "Unknown"
+            origin = "We dont have that word in our API!"
         }
         addRow(breedName, origin);
     };
     request.send();
 }
 
-function populateTable(breed){
-
-    console.log("populate table")    
-    console.log(breed);
-
-
+function randomBreed(){
+    let breed = breeds[getRandomInt(breeds.length)]
     const request = new XMLHttpRequest();
 
-    let url = "http://api.dictionaryapi.dev/api/v2/entries/en/" + breed; 
+    let url = `http://api.dictionaryapi.dev/api/v2/entries/en/${breed}`; 
 
     request.open("GET", url, true);
 
@@ -152,20 +138,17 @@ function populateTable(breed){
 
         if(request.status == 200){
             console.log("Info Response OK");  
-            origin = breed + " " + data[0].origin;
+            origin = data[0].origin;
         
         }else {
             console.log(`Error occured: Status: ${request.status}`);
-            console.log("Cannot find breed");
-            origin = breed + " " + "Unknown"
+            origin = "We dont have that word in our API!"
         }
 
         addRow(breed, origin);
-        console.log("after addRow call-----------------------------------------")
+        //console.log("after addRow call-----------------------------------------")
     };
     request.send();
-
-    console.log("Origin: " + origin);
 }
 
 function clearTable(){
@@ -193,9 +176,14 @@ function clearTable(){
     document.querySelector("#table").appendChild(tableRow); 
 }
 
+function addComment(){
+    let text = document.querySelector("#comment").value; 
+   
+    let textNode = document.createTextNode(text);
+    let line = document.createElement('p');
 
+    line.appendChild(textNode);
+    document.querySelector("#commentSection").appendChild(line);
 
-
-
-
-
+    document.querySelector("#comment").value = ""; 
+}
